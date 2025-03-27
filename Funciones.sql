@@ -118,3 +118,34 @@ insert into actor(actor_id, first_name, last_name, lat_update) values
 ('laura','delgado',now());
 commit
 end
+
+
+
+-- si active es false-0 si es true-1, para los clientes que no hayan alquilado ninguna pelicula en el ultimo año, los cambiamos a inactivos.
+
+
+
+
+select last_update from customer;
+
+DELIMITER $$
+CREATE procedure update_active_client(in cliente_id int)
+BEGIN
+
+
+if (select active from customer where customer_id=cliente_id) =0
+then select 'El cliente ya esta inactivo.' as message;
+end if;
+
+if datediff(("2006-12-31", select last_update from customer where customer_id=cliente_id))>365day
+then update customer
+set active =0;
+end if;
+
+
+END;
+$$
+
+
+
+-- hacer una rebaja del 10% a las pelis no alquiladas en los ultimos 6 meses.
